@@ -1,0 +1,6 @@
+*.xlsx*
+*.xls*
+.bundle/
+.idea/
+*.lock
+vendor/cache/
