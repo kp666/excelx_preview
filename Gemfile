@@ -13,7 +13,4 @@ group :development do
   gem "rdiscount"
 end
 
-
-#gem "nokogiri", "~> 1.5.0"
-#gem 'activesupport'
 gemspec
