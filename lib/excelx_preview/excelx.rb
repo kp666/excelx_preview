@@ -106,8 +106,7 @@ module ExcelX
     def self.attribute2format(s) #taken from roo gem
       result = nil
       @numFmts.each { |nf|
-        # to_s weil das eine Nokogiri::XML::Attr und das
-        # andere ein String ist
+
         if nf.first.to_s == @cellXfs[s.to_i].first
           result = nf[1]
           break
@@ -160,9 +159,7 @@ module ExcelX
     def self.datetime_whenis(value, type, format)
 
       date_or_time_format = datetimeformat(format, type)
-      # pp "#{value} #{format} #{date_or_time_format} #{type}"
       if  type == :date
-        #Date.new("#{value}".delete('date(').chop.split(",").map(&:to_i)).to_s  rescue ""
         Date.strptime(value, "date(#{date_or_time_format}").to_s rescue value # TODO do same formatting as in the sheet
       elsif type == :time
         Time.parse("#{value}".delete('time(').chop.split(",").map(&:to_i).join(":")).strftime(date_or_time_format) rescue value
@@ -192,7 +189,7 @@ module ExcelX
       s_value = link["s"].to_i
       format = attribute2format(s_value).to_s.downcase.gsub(/\\/, "").gsub("-", "/")
       type = format2type(format)
-
+      return nil if link.children.empty?
       if is?(link)
         value = link.content.downcase
         datetime_whenis(value, type, format)
@@ -228,7 +225,7 @@ module ExcelX
     def self.preview(filename, sheets=false)
 
       @filename = filename.chomp(File.extname(filename)) rescue filename
-      @tmp_folder = UUID.new.generate
+      @tmp_folder = "/tmp/#{UUID.new.generate}"
       unzip
       @sheet_list = extracted_sheets unless sheets
       @sheet_list = [sheets] if sheets
@@ -247,8 +244,8 @@ module ExcelX
       `unzip -o  #{@filename}.xlsx -d #{@tmp_folder}`
     end
 
-    def self.cleanup()
-      `rm -rf #{@tmp_folder}`
+    def self.cleanup()      #TODO use fileutils or something.
+      FileUtils.remove_dir(@tmp_folder,force= true)
     end
 
     def self.extracted_sheets()
