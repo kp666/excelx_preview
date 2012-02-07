@@ -1,2 +1,2 @@
 source :rubygems
-gem "excelx_preview"
+gem "excelx_preview",:git=>git://github.com/kp666/excelx_preview.git
